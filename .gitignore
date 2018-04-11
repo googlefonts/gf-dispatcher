@@ -1,0 +1,10 @@
+*.egg
+env/
+venv/
+.DS_Store
+*.pyc
+*.egg-info
+pr*
+credentials.json
+client_secrets.json
+drive-settings.yaml

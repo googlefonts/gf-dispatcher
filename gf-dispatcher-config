@@ -1,0 +1,9 @@
+[Credentials]
+local_gf_repo_path = /path/to/google/fonts
+fontbakery_path = /path/to/fontbakery/bin/fontbakery-check-googlefonts.py
+gf_add_font = /path/to/googlefonts/tools
+git_remote = {{ git remote }}
+imgur_client_id = {{ str }}
+drive_settings = /path/to/drive-settings.yaml
+browserstack_username = {{ str }}
+browserstack_access_key = {{ str }}

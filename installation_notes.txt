@@ -1,0 +1,31 @@
+
+
+## Installation
+
+### Authentification and path provisions
+
+Dispatcher relies on several 3rd party aplications and their apis. We keep the authentification credentials and paths to these services in a hidden file. A template has been included in this repo called *gf-dispatcher-config*'. Once you have completed it, `mv gf-dispatcher-credentials ~/.gf-dispatcher-config`.
+
+
+### 3rd party
+
+Dispatcher uses the following 3rd party services:
+
+- Imgur
+- Google Drive
+
+
+** Imgur **
+
+This service is used to host the gifs which are included every pull request that Dispatcher makes.
+
+Once you have registed an account, you'll need to create an application. Dispatcher only needs the application's Client ID to work. Include this in `~/.gf-dispatcher-credentials`
+
+
+** Google Drive **
+
+Drive is used for uploading a zip of all the image files. We don't include every image in the body of the pull request. If the report looks suspicious, reviewers can download the zip and inspect the images themselves.
+
+Follow this quickstart guide to get setup, https://pythonhosted.org/PyDrive/quickstart.html.
+
+You will also need to have a drive-settings.yaml file, http://pythonhosted.org/PyDrive/oauth.html#sample-settings-yaml. This allows us to have automatic authentification. A template has been included *drive-settings-template.yaml*. Once completed `mv drive-settings-template.yaml drive-settings.yaml`
