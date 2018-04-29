@@ -20,6 +20,7 @@ VALID_STYLES = [
     '' # Some old GF legacy fonts didn't include a stylename
 ]
 
+VALID_STYLES = VALID_STYLES + [i + 'Italic' for i in VALID_STYLES]
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,9 +29,10 @@ logger = logging.getLogger(__name__)
 class UpstreamRepo:
     def __init__(self, url, fonts_dir, path):
         self.path = path
-        self.license =  self._get_license(url)
-        self.families = self._get_family_fonts(url, fonts_dir)
-        self.html_snippet = self._get_html_snippet(url)
+        self.url = url.replace('.git', '') if url.endswith('.git') else url
+        self.license =  self._get_license(self.url)
+        self.families = self._get_family_fonts(self.url, fonts_dir)
+        self.html_snippet = self._get_html_snippet(self.url)
 
     def _get_family_fonts(self, url, fonts_dir, filter_styles=True):
         """Download fonts from a repo directory.
@@ -78,7 +80,6 @@ class UpstreamRepo:
         api_url = self._convert_url_to_api_url(url, dirs)
         request = requests.get(api_url)
         api_request = json.loads(request.text)
-
         for item in api_request:
             if not item['download_url']:
                 continue
