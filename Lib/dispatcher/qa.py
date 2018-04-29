@@ -98,8 +98,8 @@ class QA:
         huge images. The median style will likely pick up any multiple
         master compatibility issues."""
         fonts_to_test = self._select_fonts_for_diffbrowsers()
-        diffbrowsers = DiffBrowsers(self.bstack_auth, fonts_before, fonts_to_test,
-                                    self.path)
+        diffbrowsers = DiffBrowsers(self.bstack_auth,self.path)
+        diffbrowsers.new_session(fonts_before, fonts_to_test)
         self.gfr_url = 'http://www.gf-regression.com/compare/' + diffbrowsers.gf_regression.uuid
 
         diffbrowsers.diff_view('waterfall', gen_gifs=True)
@@ -113,8 +113,8 @@ class QA:
 
     def diffbrowsers_new_family(self):
         fonts_to_test = self._select_fonts_for_diffbrowsers()
-        diffbrowsers = DiffBrowsers(self.bstack_auth, fonts_to_test, fonts_to_test,
-                                    self.path)
+        diffbrowsers = DiffBrowsers(self.bstack_auth, self.path)
+        diffbrowsers.new_session(fonts_to_test, fonts_to_test,)
         self.gfr_url = 'http://www.gf-regression.com/compare/' + diffbrowsers.gf_regression.uuid
         diffbrowsers.diff_view('waterfall', gen_gifs=True)
 
