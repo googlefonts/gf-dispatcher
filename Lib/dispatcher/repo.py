@@ -54,7 +54,7 @@ class Family(object):
         old_filenames = map(os.path.basename, self.fonts)
         new_filenames = map(os.path.basename, files)
         if len(set(old_filenames) - set(new_filenames)) > 0:
-            raise InsufficientFonts
+            raise InsufficientFonts(self.fonts, files)
 
         fonts_hash = {basename(f): md5_checksum(f) for f in self.fonts}
         new_fonts_hash = {basename(f): md5_checksum(f) for f in files}
