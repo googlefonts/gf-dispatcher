@@ -85,19 +85,29 @@ def pr_family_to_googlefonts(repo_url, license, fonts, qa_out, html_snippet=None
                      json.dumps(qa.failed_tests, indent=4)))
 
 
-def pr_upstream_to_googlefonts(upstream_url, upstream_fonts_dir, upstream_out, qa_out):
+def pr_upstream_to_googlefonts(upstream_url, upstream_fonts_dir):
     #1 Download license and fonts
     logger.info('Downloading license and fonts from {}'.format(upstream_url))
-    upstream_repo = UpstreamRepo(upstream_url, upstream_fonts_dir, upstream_out)
 
-    for family in upstream_repo.families:
-        logger.info('PRing {} to google/fonts repo'.format(family))
-        pr_family_to_googlefonts(
-            upstream_url,
-            upstream_repo.license,
-            upstream_repo.families[family],
-            qa_out
-        )
+    try:
+        upstream_out = tempfile.mkdtemp()
+        upstream_repo = UpstreamRepo(upstream_url, upstream_fonts_dir, upstream_out)
+
+        for family in upstream_repo.families:
+            logger.info('PRing {} to google/fonts repo'.format(family))
+            qa_out = tempfile.mkdtemp()
+            pr_family_to_googlefonts(
+                upstream_url,
+                upstream_repo.license,
+                upstream_repo.families[family],
+                qa_out
+            )
+            shutil.rmtree(qa_out)
+            git_cleanup()
+    except KeyboardInterrupt:
+        logger.info("Dispatcher terminated. Cleaning up.")
+    finally:
+        shutil.rmtree(upstream_out)
 
 
 def main():
@@ -110,27 +120,18 @@ def main():
     parser.add_argument("repo_fonts_dir")
     args = parser.parse_args()
 
-    upstream_out = tempfile.mkdtemp()
-    qa_out = tempfile.mkdtemp()
-
-    try:
-        pr_upstream_to_googlefonts(args.repo_url, args.repo_fonts_dir, upstream_out, qa_out)
-    except KeyboardInterrupt:
-        logger.info("Dispatcher terminated. Cleaning up.")
-    finally:
-        cleanup(upstream_out, qa_out)
+    pr_upstream_to_googlefonts(args.repo_url, args.repo_fonts_dir)
 
 
-def cleanup(upstream_out, qa_out):
-    logger.info("Removing temporary dirs")
-    shutil.rmtree(upstream_out)
-    shutil.rmtree(qa_out)
+def git_cleanup():
+    cwd = os.getcwd()
     os.chdir(SETTINGS['local_gf_repo_path'])
     subprocess.call(['git', 'stash'])
     subprocess.call(['git', 'checkout', 'master'])
     subprocess.call(['git', 'reset', '--hard'])
     subprocess.call(['git', "clean", '-f'])
     logger.info("Repo {} reset back to master.".format(SETTINGS['local_gf_repo_path']))
+    os.chdir(cwd)
 
 
 if __name__ == '__main__':
