@@ -62,7 +62,7 @@ class QA:
         import json
 
         report = NamedTemporaryFile(mode='w')
-        cmd = [SETTINGS['fontbakery_path']] + self.fonts + ['-C', '--json', report.name]
+        cmd = ['fontbakery', 'check-googlefonts'] + self.fonts + ['--ghmarkdown', report.name]
         stdout = subprocess.check_output(cmd)
         self.fb_json = json.load(open(report.name))
         self.fb_report = stdout
