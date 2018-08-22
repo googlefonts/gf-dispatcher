@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def pr_family_to_googlefonts(repo_url, license, fonts, qa_out, html_snippet=None):
+def pr_family_to_googlefonts(repo_url, license, fonts, upstream_commit, qa_out, html_snippet=None):
     """Send a family pr to a google/fonts repo"""
     logger.info('Running preflight')
     qa = QA(license, fonts, qa_out)
@@ -69,7 +69,7 @@ def pr_family_to_googlefonts(repo_url, license, fonts, qa_out, html_snippet=None
     #4 PR
     if qa.passed:
         logger.info('QA passed. commiting fonts to {}'.format(SETTINGS['local_gf_repo_path']))
-        commit_msg = repo.commit(family_name, repo_url)
+        commit_msg = repo.commit(family_name, repo_url, upstream_commit)
         # push to google/fonts. We need a bot
         logger.info('PRing fonts to {}. Be patient'.format(SETTINGS['local_gf_repo_path']))
         repo.pull_request(
@@ -100,6 +100,7 @@ def pr_upstream_to_googlefonts(upstream_url, upstream_fonts_dir):
                 upstream_url,
                 upstream_repo.license,
                 upstream_repo.families[family],
+                upstream_repo.commit,
                 qa_out
             )
             shutil.rmtree(qa_out)
