@@ -49,6 +49,7 @@ class UpstreamRepo:
         fonts = self._download_files(url, fonts_dir)
         if filter_styles:
             fonts = filter(self._valid_style, fonts)
+            fonts = filter(self._is_ttf, fonts)
 
         for font in fonts:
             family = os.path.basename(font.split('-')[0])
@@ -71,6 +72,10 @@ class UpstreamRepo:
             return True
         logger.warn("skipping {}. {} not valid style".format(font_path, style))
         return False
+
+    @staticmethod
+    def _is_ttf(font_path):
+        return True if font_path.endswith('.ttf') else False
 
     def _download_files(self, url, dirs=None, files=None):
         """Download files from a github repo directory.
