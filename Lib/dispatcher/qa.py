@@ -61,12 +61,20 @@ class QA:
         from tempfile import NamedTemporaryFile
         import json
 
-        report = NamedTemporaryFile(mode='w')
-        cmd = ['fontbakery', 'check-googlefonts'] + self.fonts + ['--ghmarkdown', report.name]
-        stdout = subprocess.check_output(cmd)
-        self.fb_json = json.load(open(report.name))
-        self.fb_report = stdout
-        report.close()
+        md_report = NamedTemporaryFile(mode='w')
+        json_report = NamedTemporaryFile(mode='w')
+        cmd = ['fontbakery', 'check-googlefonts'] + self.fonts + \
+              ['--ghmarkdown', md_report.name] + \
+              ['--json', json_report.name] + \
+              ['-l', 'FAIL']
+        try:
+            stdout = subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as exc:
+            stdout = exc.output
+        self.fb_json = json.load(open(json_report.name))
+        self.fb_report = open(md_report.name).read()
+        md_report.close()
+        json_report.close()
 
     @property
     def passed(self):

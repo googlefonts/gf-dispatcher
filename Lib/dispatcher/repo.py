@@ -242,7 +242,7 @@ class GFRepo(object):
     def _pr_text(self, commit_msg, fb_report, diffbrowsers_report, images, img_zip_url, gfr_url):
         """Generate text for the pull request"""
         text = commit_msg
-        report_text = ("\n\n---\n## FontBakery Report:\n```{}```\n\n---\n"
+        report_text = ("\n\n---\n## FontBakery Report:\n{}\n\n---\n"
                        "## DiffBrowsers Report:\n```{}```\n\n").format(
                        fb_report, diffbrowsers_report)
         text = text + report_text
