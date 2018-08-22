@@ -47,7 +47,7 @@ def pr_family_to_googlefonts(repo_url, license, fonts, upstream_commit, qa_out, 
         family.add_file(license)
         if html_snippet:
             family.add_file(html_snippet)
-        family.generate_metadata()
+        family.generate_metadata(input_designer=True, input_category=True)
 
     #3 QA
     qa.update_paths(fonts)

@@ -101,7 +101,11 @@ class Family(object):
             raise Exception('{} does not exist'.format(new_filename))
         shutil.copy(file, self.path)
 
-    def generate_metadata(self):
+    def generate_metadata(self, input_designer=False, input_category=False):
+        """
+        input_designer: input prompt for designer name
+        input_category: input prompt for family category
+        """
         c_path = os.getcwd()
         if not SETTINGS['gf_add_font']:
             raise Exception('Provide path to gftools. Download from '
@@ -109,6 +113,37 @@ class Family(object):
         os.chdir(SETTINGS['gf_add_font'])
         add_font_tool = os.path.join(SETTINGS['gf_add_font'], 'bin', 'gftools-add-font.py')
         subprocess.call(['python', add_font_tool, self.path])
+
+        metadata_path = os.path.join(self.path, 'METADATA.pb')
+        if input_designer or input_category:
+            metadata = open(metadata_path, 'r')
+            metadata_text = metadata.read()
+            metadata.close()
+
+            if input_designer:
+                designer = raw_input('designer: ')
+                metadata_text = metadata_text.replace(
+                    'designer: "UNKNOWN"',
+                    'designer: "{}"'.format(designer)
+                )
+            if input_category:
+                category_map = {
+                    '1': 'SANS_SERIF',
+                    '2': 'SERIF',
+                    '3': 'DISPLAY',
+                    '4': 'HANDWRITING',
+                    '5': 'MONOSPACE'
+                }
+                category = raw_input('category (choices {}: '.format(
+                    str(category_map).replace(': ', '='))
+                )
+                selected_category = category_map[category]
+                metadata_text = metadata_text.replace(
+                    'category: "SANS_SERIF"', 'category: "{}"'.format(
+                        selected_category)
+                )
+            with open(metadata_path, 'w') as metadata:
+                metadata.write(metadata_text)
         os.chdir(c_path)
 
     def update_metadata(self):
