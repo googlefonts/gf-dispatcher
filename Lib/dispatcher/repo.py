@@ -184,7 +184,7 @@ class GFRepo(object):
         shutil.rmtree(family.path)
         del self.families[name]
 
-    def commit(self, family_name, repo_url):
+    def commit(self, family_name, repo_url, upstream_commit):
         """Make a git commit and push to remote repo"""
         family = self.families[family_name]
 
@@ -196,20 +196,20 @@ class GFRepo(object):
 
         subprocess.call(['git', 'checkout', '-b', family_name])
         subprocess.call(['git', 'add', family.path])
-        msg = self._commit_msg(family.name, family.fonts, repo_url)
+        msg = self._commit_msg(family.name, family.fonts, repo_url, upstream_commit)
         subprocess.call(['git', 'commit', '-m', msg])
         subprocess.call(['git', 'push', SETTINGS['git_remote']])
         return msg
 
-    def _commit_msg(self, name, fonts, repo_url):
+    def _commit_msg(self, name, fonts, repo_url, upstream_commit):
         """
         Generate a git commit message. For brevity, the FB reports are not
         included in commit messages. They appear in the pull request text"""
         with open(fonts[0], 'r') as font_path:
             version = TTFont(font_path)['head'].fontRevision
             version = '%.3f' % round(version, 3)
-            msg = '{}: v{} added\n\nTaken from the upstream repo {}'.format(
-                name, version, repo_url)
+            msg = '{}: v{} added\n\nTaken from the upstream repo {} at commit {}'.format(
+                name, version, repo_url, upstream_commit)
             return msg
 
     def pull_request(self, commit_msg, fb_report, diffbrowsers_report, images, path, gfr_url):

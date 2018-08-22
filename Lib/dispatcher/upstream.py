@@ -33,6 +33,7 @@ class UpstreamRepo:
         self.license =  self._get_license(self.url)
         self.families = self._get_family_fonts(self.url, fonts_dir)
         self.html_snippet = self._get_html_snippet(self.url)
+        self.commit = self._get_commit(self.url)
 
     def _get_family_fonts(self, url, fonts_dir, filter_styles=True):
         """Download fonts from a repo directory.
@@ -99,6 +100,16 @@ class UpstreamRepo:
                 items.append(file_path)
                 download_file(dl_url, file_path)
         return items
+
+    def _get_commit(self, url):
+        api_url = url.replace('https://github.com/', 'https://api.github.com/repos/') + '/git/refs/head'
+        r = requests.get(api_url)
+        for branch in r.json():
+            if "refs/heads/master" == branch['ref']:
+                commit = branch['object']['sha']
+                return url + '/commit/{}'.format(commit)
+        raise Exception('Upstream has no master branch!')
+        return None
 
     def _convert_url_to_api_url(self, url, dirs=None):
         """
