@@ -85,13 +85,13 @@ def pr_family_to_googlefonts(repo_url, license, fonts, upstream_commit, qa_out, 
                      json.dumps(qa.failed_tests, indent=4)))
 
 
-def pr_upstream_to_googlefonts(upstream_url, upstream_fonts_dir):
+def pr_upstream_to_googlefonts(upstream_url, upstream_fonts_dir, license_dir=None):
     #1 Download license and fonts
     logger.info('Downloading license and fonts from {}'.format(upstream_url))
 
     try:
         upstream_out = tempfile.mkdtemp()
-        upstream_repo = UpstreamRepo(upstream_url, upstream_fonts_dir, upstream_out)
+        upstream_repo = UpstreamRepo(upstream_url, upstream_fonts_dir, upstream_out, license_dir)
 
         for family in upstream_repo.families:
             logger.info('PRing {} to google/fonts repo'.format(family))
@@ -119,9 +119,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("repo_url")
     parser.add_argument("repo_fonts_dir")
+    parser.add_argument("--license_dir")
     args = parser.parse_args()
 
-    pr_upstream_to_googlefonts(args.repo_url, args.repo_fonts_dir)
+    if args.license_dir:
+        pr_upstream_to_googlefonts(args.repo_url, args.repo_fonts_dir, args.license_dir)
+    else:
+        pr_upstream_to_googlefonts(args.repo_url, args.repo_fonts_dir)
 
 
 def git_cleanup():

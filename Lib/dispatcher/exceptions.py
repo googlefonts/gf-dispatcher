@@ -31,8 +31,8 @@ class InsufficientFonts(Exception):
         Exception.__init__(
             self,
             ("Fonts must replace all existing fonts. "
-             "fonts in upstream [{}]\nfont in repo [{}]".format(
-                self.upstream_fonts, self.repo_fonts))
+             "Upstream is missing the following fonts [{}]".format(
+                set(self.repo_fonts) - set(self.upstream_fonts)))
         )
 
 

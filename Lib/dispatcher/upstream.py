@@ -27,10 +27,13 @@ logger = logging.getLogger(__name__)
 
 
 class UpstreamRepo:
-    def __init__(self, url, fonts_dir, path):
+    def __init__(self, url, fonts_dir, path, license_dir=None):
         self.path = path
         self.url = url.replace('.git', '') if url.endswith('.git') else url
-        self.license =  self._get_license(self.url)
+        if license_dir:
+            self.license =  self._get_license(self.url, license_dir)
+        else:
+            self.license =  self._get_license(self.url)
         self.families = self._get_family_fonts(self.url, fonts_dir)
         self.html_snippet = self._get_html_snippet(self.url)
         self.commit = self._get_commit(self.url)
@@ -84,6 +87,7 @@ class UpstreamRepo:
         If no files are listed, download all the files contained in the dir"""
         items = []
         api_url = self._convert_url_to_api_url(url, dirs)
+        print api_url
         request = requests.get(api_url)
         api_request = json.loads(request.text)
         for item in api_request:
@@ -99,6 +103,7 @@ class UpstreamRepo:
             else:
                 items.append(file_path)
                 download_file(dl_url, file_path)
+        print items
         return items
 
     def _get_commit(self, url):
@@ -122,11 +127,14 @@ class UpstreamRepo:
             url = url + dirs
         return url
 
-    def _get_license(self, url):
-        license = self._download_files(
-            url,
-            files=['OFL.txt', 'UFL.txt', 'LICENSE.txt']
-        )
+    def _get_license(self, url, license_dir=None):
+
+        allowed_licenses = ['OFL.txt', 'UFL.txt', 'LICENSE.txt']
+        if license_dir:
+            license = self._download_files(url, license_dir,
+                                           files=allowed_licenses)
+        else:
+            license = self._download_files(url, files=allowed_licenses)
         if len(license) > 1:
             raise Exception('Multiple license files discovered "{}". Repo '
                             'should only contain one license'.format(
