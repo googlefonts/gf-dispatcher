@@ -1,4 +1,11 @@
-# Google Fonts Dispatcher.
+# Google Fonts Dispatcher moved to gftools.
+
+Lasse Fister has rewritten this tool and moved it to https://github.com/googlefonts/gftools. It can been invoked using `gftools packager`.
+
+This repo is archived and set to read only.
+
+
+# Google Fonts Dispatcher
 
 PR upstream font repositories to any forked Google Font repository.
 
