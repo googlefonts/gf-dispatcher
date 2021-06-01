@@ -45,6 +45,6 @@ tabulate==0.8.2
 ufoLib==2.1.1
 Unidecode==1.0.22
 uritemplate==3.0.0
-urllib3==1.25.8
+urllib3==1.26.5
 werkzeug==1.0.1
 wheel==0.24.0
