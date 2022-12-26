@@ -47,4 +47,4 @@ Unidecode==1.0.22
 uritemplate==3.0.0
 urllib3==1.25.8
 werkzeug==1.0.1
-wheel==0.24.0
+wheel==0.38.1
