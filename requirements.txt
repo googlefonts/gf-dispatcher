@@ -12,7 +12,7 @@ fontMath==0.4.4
 fonttools==3.21.2
 git+https://github.com/googlefonts/tools
 gitdb2==2.0.3
-GitPython==2.1.8
+GitPython==3.1.32
 glyphsLib==2.2.1
 google-api-python-client==1.6.5
 google-apputils==0.4.2
